@@ -1,4 +1,5 @@
 import { AudioEngine } from "./audio.js";
+import { initMidi, onMidiNote } from "./midi.js";
 import { initModalTrainer } from "./modal-trainer.js";
 import {
   initIntervalTrainer,
@@ -140,11 +141,23 @@ document.addEventListener("keydown", (event) => {
 
 });
 
+function activeController() {
+  return activeView === "modal" ? controllers.modal : controllers[activeEarView];
+}
+
+onMidiNote((event) => {
+  const controller = activeController();
+  if (controller && typeof controller.handleMidiNote === "function") {
+    controller.handleMidiNote(event);
+  }
+});
+
 function bootstrap() {
   switchEarView("intervals");
   switchView("modal");
   controllers.modal.resetQuiz();
   controllers.modal.generateMode();
+  initMidi();
 }
 
 if (document.readyState === "loading") {

@@ -8,6 +8,7 @@ import {
 
 const PLAY_DURATION_SECONDS = 5;
 const SEQUENTIAL_NOTE_SECONDS = 1;
+const KEY_FLASH_MS = 400;
 
 const INTERVAL_OPTIONS = [
   { id: "m2", name: "Minor 2nd", semitones: 1 },
@@ -171,6 +172,40 @@ function createPlaybackController(audio, playBtn, durationSeconds = PLAY_DURATIO
   };
 }
 
+function createKeyFeedback(piano, audio) {
+  const timers = new Map();
+
+  function release(midi) {
+    const timer = timers.get(midi);
+    if (timer) {
+      clearTimeout(timer);
+      timers.delete(midi);
+    }
+
+    piano.getKeysByMidi(midi).forEach((key) => key.classList.remove("played"));
+  }
+
+  function press(midi, { sustain = false } = {}) {
+    const keys = piano.getKeysByMidi(midi);
+    if (!keys.length) return;
+
+    const timer = timers.get(midi);
+    if (timer) {
+      clearTimeout(timer);
+      timers.delete(midi);
+    }
+
+    keys.forEach((key) => key.classList.add("played"));
+    audio.playNote(midi, 0.35, { gain: 0.06 });
+
+    if (!sustain) {
+      timers.set(midi, setTimeout(() => release(midi), KEY_FLASH_MS));
+    }
+  }
+
+  return { press, release };
+}
+
 function createTrainerShell(container, title, settingsHtml, answerHtml) {
   container.innerHTML = `
     <div class="trainer-panel">
@@ -249,9 +284,11 @@ export function initIntervalTrainer(container, audio) {
     clickable: true,
     keyboardClass: "three-octave",
     onKeyPress: ({ midi }) => {
-      audio.playNote(midi, 0.35, { gain: 0.06 });
+      keyFeedback.press(midi);
     }
   });
+
+  const keyFeedback = createKeyFeedback(piano, audio);
 
   const playback = createPlaybackController(audio, ui.playBtn);
   const stats = createStats();
@@ -450,6 +487,14 @@ export function initIntervalTrainer(container, audio) {
       if (action === "play") togglePlayback();
       if (action === "reset") resetQuiz();
     },
+    handleMidiNote({ midi, on }) {
+      if (on) {
+        keyFeedback.press(midi, { sustain: true });
+        return;
+      }
+
+      keyFeedback.release(midi);
+    },
     stopPlayback() {
       playback.stop();
     }
@@ -516,9 +561,11 @@ function createChordTrainer(container, audio, config) {
     clickable: true,
     keyboardClass: "three-octave",
     onKeyPress: ({ midi }) => {
-      audio.playNote(midi, 0.35, { gain: 0.06 });
+      keyFeedback.press(midi);
     }
   });
+
+  const keyFeedback = createKeyFeedback(piano, audio);
 
   const playback = createPlaybackController(audio, ui.playBtn);
   const stats = createStats();
@@ -759,6 +806,14 @@ function createChordTrainer(container, audio, config) {
       if (action === "new") newChallenge();
       if (action === "play") togglePlayback();
       if (action === "reset") resetQuiz();
+    },
+    handleMidiNote({ midi, on }) {
+      if (on) {
+        keyFeedback.press(midi, { sustain: true });
+        return;
+      }
+
+      keyFeedback.release(midi);
     },
     stopPlayback() {
       playback.stop();

@@ -1,4 +1,5 @@
 import { Piano } from "./piano.js";
+import { onMidiMessage, onMidiStatus } from "./midi.js";
 import {
   CHROMATIC,
   displayNote,
@@ -363,44 +364,24 @@ export function initModalTrainer(root, audio) {
     startDrone();
   }
 
-  function attachMidiInput(input) {
-    input.onmidimessage = (event) => {
-      const [status, note, velocity] = event.data;
+  function handleMidiNote({ midi, on }) {
+    if (!on) return;
+    if (midi < PIANO_LOW || midi > PIANO_HIGH) return;
+    hit(CHROMATIC[midi % 12], midi);
+  }
+
+  function watchMidi() {
+    onMidiStatus((text) => {
+      elements.midiStatus.textContent = text;
+    });
+
+    onMidiMessage(({ status, note, velocity }) => {
       const noteName = CHROMATIC[note % 12];
       const inPianoRange = note >= PIANO_LOW && note <= PIANO_HIGH;
 
       elements.midiMonitor.textContent =
         `status=${status} note=${note} velocity=${velocity} mapped=${noteName} piano88=${inPianoRange}`;
-
-      if ((status & 0xf0) === 0x90 && velocity > 0) {
-        if (!inPianoRange) return;
-        hit(noteName, note);
-      }
-    };
-  }
-
-  function initMidi() {
-    if (!navigator.requestMIDIAccess) {
-      elements.midiStatus.textContent = "MIDI: Web MIDI not supported";
-      return;
-    }
-
-    navigator.requestMIDIAccess()
-      .then((midi) => {
-        elements.midiStatus.textContent = "MIDI Ready";
-        const connectAll = () => {
-          for (const input of midi.inputs.values()) {
-            attachMidiInput(input);
-          }
-        };
-        connectAll();
-        midi.onstatechange = () => {
-          connectAll();
-        };
-      })
-      .catch(() => {
-        elements.midiStatus.textContent = "MIDI Access Failed";
-      });
+    });
   }
 
   elements.generateBtn.addEventListener("click", generateMode);
@@ -409,13 +390,14 @@ export function initModalTrainer(root, audio) {
   elements.resetBtn.addEventListener("click", resetQuiz);
 
   setDroneButtonLabel();
-  initMidi();
+  watchMidi();
 
   return {
     generateMode,
     resetQuiz,
     playDroneToggle,
     revealNotes,
+    handleMidiNote,
     onViewHidden: () => {
       stopDrone();
     }

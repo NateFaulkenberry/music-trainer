@@ -112,7 +112,7 @@ export class Piano {
     return this.keyElements.filter((el) => Number(el.dataset.midi) === midi);
   }
 
-  clearHighlights(classNames = ["good", "bad", "revealed", "drone"]) {
+  clearHighlights(classNames = ["good", "bad", "revealed", "drone", "played"]) {
     this.keyElements.forEach((el) => {
       classNames.forEach((className) => el.classList.remove(className));
     });

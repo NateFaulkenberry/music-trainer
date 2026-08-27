@@ -156,6 +156,11 @@ h3 {
   color: #000;
 }
 
+.played {
+  background: #ffd166 !important;
+  color: #000;
+}
+
 #modalResult {
   font-size: 2rem;
   font-weight: bold;
