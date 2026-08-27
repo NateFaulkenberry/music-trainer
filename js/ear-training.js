@@ -7,6 +7,7 @@ import {
 } from "./music-theory.js";
 
 const PLAY_DURATION_SECONDS = 5;
+const SEQUENTIAL_NOTE_SECONDS = 1;
 
 const INTERVAL_OPTIONS = [
   { id: "m2", name: "Minor 2nd", semitones: 1 },
@@ -134,16 +135,19 @@ function createPlaybackController(audio, playBtn, durationSeconds = PLAY_DURATIO
     }
   }
 
-  async function start(midis, mode) {
+  async function start(midis, mode, options = {}) {
     stop();
+
+    const { noteDuration = null } = options;
+    const total = noteDuration ? noteDuration * midis.length : durationSeconds;
 
     const myToken = token;
     playBtn.textContent = "Stop";
     timer = setTimeout(() => {
       if (myToken === token) stop(true);
-    }, durationSeconds * 1000);
+    }, total * 1000);
 
-    const started = await audio.playSustained(midis, { mode, duration: durationSeconds });
+    const started = await audio.playSustained(midis, { mode, duration: total, noteDuration });
 
     if (myToken !== token) {
       audio.stopVoices(started);
@@ -176,7 +180,7 @@ function createTrainerShell(container, title, settingsHtml, answerHtml) {
         <button data-action="new">New Challenge</button>
         <button data-action="play">Play</button>
         <button data-action="reveal">Reveal Answer</button>
-        <button data-action="reset">Reset Stats</button>
+        <button data-action="reset">Reset Quiz</button>
       </div>
 
       <div class="trainer-status" data-role="status">Press New Challenge to begin.</div>
@@ -318,10 +322,16 @@ export function initIntervalTrainer(container, audio) {
       ? [challenge.notes[1], challenge.notes[0]]
       : challenge.notes;
 
-    playback.start(notes, mode === "harmonic" ? "block" : "sequential");
+    const isSequential = mode !== "harmonic";
+    const noteDuration = isSequential ? SEQUENTIAL_NOTE_SECONDS : null;
+    const totalSeconds = isSequential
+      ? SEQUENTIAL_NOTE_SECONDS * notes.length
+      : PLAY_DURATION_SECONDS;
+
+    playback.start(notes, isSequential ? "sequential" : "block", { noteDuration });
     setStatus(
       ui.status,
-      `Listening... Playback mode: ${mode}. Press Stop to end the ${PLAY_DURATION_SECONDS}s tone early.`
+      `Listening... Playback mode: ${mode}. Press Stop to end the ${totalSeconds}s playback early.`
     );
   }
 
@@ -388,21 +398,48 @@ export function initIntervalTrainer(container, audio) {
     updateScoreText(ui.score, stats);
   }
 
-  function resetStats() {
+  function resetQuiz() {
     Object.assign(stats, createStats());
     updateScoreText(ui.score, stats);
-    setStatus(ui.status, "Stats reset. Press New Challenge.");
+
+    answeredCorrectly = false;
+    piano.clearHighlights();
+    answersEl.querySelectorAll("button").forEach((btn) => {
+      btn.classList.remove("good", "bad", "selected");
+    });
+
     ui.result.textContent = "Answer is hidden until you respond.";
+    setStatus(
+      ui.status,
+      challenge
+        ? "Quiz reset. Try this challenge again, or press New Challenge."
+        : "Quiz reset. Press New Challenge."
+    );
+  }
+
+  function applyPlaybackChange() {
+    if (!challenge) return;
+
+    challenge.playbackMode = resolvedPlaybackMode();
+
+    if (playback.isPlaying()) {
+      playChallenge();
+      return;
+    }
+
+    setStatus(ui.status, `Playback mode: ${challenge.playbackMode}. Press Play to hear this challenge again.`);
   }
 
   intervalSettings.forEach((input) => {
     input.addEventListener("change", renderAnswerButtons);
   });
 
+  playbackSelect.addEventListener("change", applyPlaybackChange);
+
   ui.newBtn.addEventListener("click", newChallenge);
   ui.playBtn.addEventListener("click", togglePlayback);
   ui.revealBtn.addEventListener("click", () => revealAnswer(false));
-  ui.resetBtn.addEventListener("click", resetStats);
+  ui.resetBtn.addEventListener("click", resetQuiz);
 
   renderAnswerButtons();
   updateScoreText(ui.score, stats);
@@ -411,7 +448,7 @@ export function initIntervalTrainer(container, audio) {
     handleShortcut(action) {
       if (action === "new") newChallenge();
       if (action === "play") togglePlayback();
-      if (action === "reset") resetStats();
+      if (action === "reset") resetQuiz();
     },
     stopPlayback() {
       playback.stop();
@@ -561,13 +598,20 @@ function createChordTrainer(container, audio, config) {
       return;
     }
 
+    const isArpeggiated = challenge.playbackMode === "arpeggiated";
+    const noteDuration = isArpeggiated ? SEQUENTIAL_NOTE_SECONDS : null;
+    const totalSeconds = isArpeggiated
+      ? SEQUENTIAL_NOTE_SECONDS * challenge.notes.length
+      : PLAY_DURATION_SECONDS;
+
     playback.start(
       challenge.notes,
-      challenge.playbackMode === "arpeggiated" ? "sequential" : "block"
+      isArpeggiated ? "sequential" : "block",
+      { noteDuration }
     );
     setStatus(
       ui.status,
-      `Listening... Playback mode: ${challenge.playbackMode}. Press Stop to end the ${PLAY_DURATION_SECONDS}s tone early.`
+      `Listening... Playback mode: ${challenge.playbackMode}. Press Stop to end the ${totalSeconds}s playback early.`
     );
   }
 
@@ -653,12 +697,40 @@ function createChordTrainer(container, audio, config) {
     updateScoreText(ui.score, stats);
   }
 
-  function resetStats() {
+  function resetQuiz() {
     Object.assign(stats, createStats());
     updateScoreText(ui.score, stats);
-    setStatus(ui.status, "Stats reset. Press New Challenge.");
+
+    answeredCorrectly = false;
+    selectedQuality = null;
+    selectedInversion = null;
+    clearChoiceHighlights();
+    markSelected();
+    piano.clearHighlights();
+
     ui.result.textContent = "Answer is hidden until you respond.";
+    setStatus(
+      ui.status,
+      challenge
+        ? "Quiz reset. Try this challenge again, or press New Challenge."
+        : "Quiz reset. Press New Challenge."
+    );
   }
+
+  function applyPlaybackChange() {
+    if (!challenge) return;
+
+    challenge.playbackMode = playbackSelect.value;
+
+    if (playback.isPlaying()) {
+      playChallenge();
+      return;
+    }
+
+    setStatus(ui.status, `Playback mode: ${challenge.playbackMode}. Press Play to hear this challenge again.`);
+  }
+
+  playbackSelect.addEventListener("change", applyPlaybackChange);
 
   qualityButtons.forEach((btn) => {
     btn.addEventListener("click", () => {
@@ -677,7 +749,7 @@ function createChordTrainer(container, audio, config) {
   ui.newBtn.addEventListener("click", newChallenge);
   ui.playBtn.addEventListener("click", togglePlayback);
   ui.revealBtn.addEventListener("click", () => revealAnswer(false));
-  ui.resetBtn.addEventListener("click", resetStats);
+  ui.resetBtn.addEventListener("click", resetQuiz);
   submitBtn.addEventListener("click", submitAnswer);
 
   updateScoreText(ui.score, stats);
@@ -686,7 +758,7 @@ function createChordTrainer(container, audio, config) {
     handleShortcut(action) {
       if (action === "new") newChallenge();
       if (action === "play") togglePlayback();
-      if (action === "reset") resetStats();
+      if (action === "reset") resetQuiz();
     },
     stopPlayback() {
       playback.stop();

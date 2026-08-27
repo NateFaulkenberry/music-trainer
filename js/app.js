@@ -140,5 +140,15 @@ document.addEventListener("keydown", (event) => {
 
 });
 
-switchEarView("intervals");
-switchView("modal");
+function bootstrap() {
+  switchEarView("intervals");
+  switchView("modal");
+  controllers.modal.resetQuiz();
+  controllers.modal.generateMode();
+}
+
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", bootstrap);
+} else {
+  bootstrap();
+}

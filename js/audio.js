@@ -143,6 +143,7 @@ export class AudioEngine {
     const {
       mode = "block",
       duration = 5,
+      noteDuration = null,
       gain = 0.06,
       type = "sine"
     } = options;
@@ -150,7 +151,7 @@ export class AudioEngine {
     const start = this.audioCtx.currentTime + 0.01;
 
     if (mode === "sequential" && midis.length > 1) {
-      const slot = duration / midis.length;
+      const slot = noteDuration || duration / midis.length;
       return midis.map((midi, i) =>
         this.scheduleSustainedVoice(midi, {
           startTime: start + i * slot,

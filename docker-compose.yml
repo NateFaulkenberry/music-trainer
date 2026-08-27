@@ -6,4 +6,7 @@ services:
     container_name: music-trainer
     ports:
       - "8080:80"
+    volumes:
+      - .:/usr/share/nginx/html:ro
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
     restart: unless-stopped
