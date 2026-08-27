@@ -206,11 +206,9 @@ function createKeyFeedback(piano, audio) {
   return { press, release };
 }
 
-function createTrainerShell(container, title, settingsHtml, answerHtml) {
+function createTrainerShell(container, settingsHtml, answerHtml) {
   container.innerHTML = `
     <div class="trainer-panel">
-      <h2>${title}</h2>
-
       <div class="trainer-actions">
         <button data-action="new">New Challenge</button>
         <button data-action="play">Play</button>
@@ -273,7 +271,7 @@ export function initIntervalTrainer(container, audio) {
   `;
 
   const answerHtml = `<div class="answer-grid" data-role="answers"></div>`;
-  const ui = createTrainerShell(container, "Interval Ear Training", settingsHtml, answerHtml);
+  const ui = createTrainerShell(container, settingsHtml, answerHtml);
   const intervalSettings = container.querySelectorAll('input[data-interval]');
   const playbackSelect = container.querySelector('select[data-playback]');
   const answersEl = container.querySelector('[data-role="answers"]');
@@ -548,7 +546,7 @@ function createChordTrainer(container, audio, config) {
     </div>
   `;
 
-  const ui = createTrainerShell(container, config.title, settingsHtml, answerHtml);
+  const ui = createTrainerShell(container, settingsHtml, answerHtml);
 
   const playbackSelect = container.querySelector('select[data-playback]');
   const qualityButtons = Array.from(container.querySelectorAll('button[data-quality-choice]'));
@@ -823,7 +821,6 @@ function createChordTrainer(container, audio, config) {
 
 export function initTriadTrainer(container, audio) {
   return createChordTrainer(container, audio, {
-    title: "Triad Ear Training",
     qualities: TRIAD_QUALITIES,
     inversions: TRIAD_INVERSIONS
   });
@@ -831,7 +828,6 @@ export function initTriadTrainer(container, audio) {
 
 export function initSeventhTrainer(container, audio) {
   return createChordTrainer(container, audio, {
-    title: "7th Chord Ear Training",
     qualities: SEVENTH_QUALITIES,
     inversions: SEVENTH_INVERSIONS
   });
