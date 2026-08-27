@@ -186,8 +186,8 @@ function createKeyFeedback(piano, audio) {
   }
 
   function press(midi, { sustain = false } = {}) {
+    // Every note sounds; only the octaves currently on screen light up.
     const keys = piano.getKeysByMidi(midi);
-    if (!keys.length) return;
 
     const timer = timers.get(midi);
     if (timer) {
@@ -198,7 +198,7 @@ function createKeyFeedback(piano, audio) {
     keys.forEach((key) => key.classList.add("played"));
     audio.playNote(midi, 0.35, { gain: 0.06 });
 
-    if (!sustain) {
+    if (!sustain && keys.length) {
       timers.set(midi, setTimeout(() => release(midi), KEY_FLASH_MS));
     }
   }
