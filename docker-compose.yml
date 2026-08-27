@@ -1,0 +1,9 @@
+services:
+  music-trainer:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: music-trainer
+    ports:
+      - "8080:80"
+    restart: unless-stopped

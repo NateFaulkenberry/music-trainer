@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Music Trainer</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+  <header class="site-header">
+    <h1>Music Trainer</h1>
+    <div class="top-nav" aria-label="Training navigation">
+      <button class="nav-btn active" data-view="modal">Modal Trainer</button>
+      <button class="nav-btn" data-view="ear">Ear Training</button>
+    </div>
+  </header>
+
+  <section id="view-modal" class="view active" aria-label="Modal Trainer">
+    <h2>Modal Trainer V4.1</h2>
+
+    <div class="modal-actions">
+      <button id="modalGenerateBtn">Generate</button>
+      <button id="modalPlayDroneBtn">Play Drone</button>
+      <button id="modalQuizSoundToggleBtn">Quiz Sound: On</button>
+      <button id="modalRevealBtn">Reveal Notes</button>
+      <button id="modalResetBtn">Reset Quiz</button>
+    </div>
+
+    <div id="modalResult">Generate a mode</div>
+    <div id="modalDroneText"></div>
+
+    <h3>Drone Keyboard</h3>
+    <div class="keyboardWrap">
+      <div id="modalDroneKb" class="keyboard two-octave"></div>
+    </div>
+
+    <h3>Quiz Keyboard</h3>
+    <div class="keyboardWrap">
+      <div id="modalQuizKb" class="keyboard one-octave"></div>
+    </div>
+
+    <div class="status-panel" id="modalStatusPanel">
+      <div id="modalNotes"></div>
+      <div id="modalParentMajorInfo"></div>
+      <div id="modalChordsSection"></div>
+      <div id="modalScore">Correct: 0 | Incorrect: 0 | Accuracy: 0%</div>
+      <div id="modalMidiStatus">MIDI: Initializing...</div>
+    </div>
+
+    <div id="modalMidiMonitor">No MIDI messages yet.</div>
+
+    <div id="modalShortcutLegend">
+      <strong>Keyboard Shortcuts</strong>
+      <ul>
+        <li>Spacebar: Generate</li>
+        <li>R: Reset Quiz</li>
+      </ul>
+    </div>
+  </section>
+
+  <section id="view-ear" class="view" aria-label="Ear Training">
+    <h2>Ear Training</h2>
+    <div class="ear-tabs" aria-label="Ear training mode navigation">
+      <button class="nav-btn active" data-ear-view="intervals">Intervals</button>
+      <button class="nav-btn" data-ear-view="triads">Triads</button>
+      <button class="nav-btn" data-ear-view="sevenths">7th Chords</button>
+    </div>
+
+    <div id="view-intervals" class="ear-view active" aria-label="Interval Ear Training"></div>
+    <div id="view-triads" class="ear-view" aria-label="Triad Ear Training"></div>
+    <div id="view-sevenths" class="ear-view" aria-label="Seventh Chord Ear Training"></div>
+  </section>
+
+  <script type="module" src="js/app.js"></script>
+</body>
+
+</html>

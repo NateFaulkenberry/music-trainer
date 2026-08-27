@@ -1,0 +1,414 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: Arial, sans-serif;
+  background: #f4f4f4;
+  text-align: center;
+  padding: 20px;
+  margin: 0;
+  color: #1b1b1b;
+}
+
+button {
+  padding: 10px 16px;
+  margin: 5px;
+  border: 1px solid #999;
+  border-radius: 6px;
+  background: #ffffff;
+  cursor: pointer;
+}
+
+button:hover {
+  background: #f2f7ff;
+}
+
+button:focus-visible,
+input:focus-visible,
+select:focus-visible {
+  outline: 3px solid #2d75d6;
+  outline-offset: 1px;
+}
+
+h1 {
+  margin: 10px 0 12px;
+}
+
+h2,
+h3 {
+  margin-bottom: 8px;
+}
+
+.site-header {
+  max-width: 1100px;
+  margin: 0 auto 14px;
+}
+
+.top-nav {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-bottom: 10px;
+}
+
+.nav-btn.active {
+  background: #d6e9ff;
+  border-color: #6ba3df;
+  font-weight: 700;
+}
+
+.view {
+  display: none;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.view.active {
+  display: block;
+}
+
+.modal-actions,
+.trainer-actions,
+.trainer-playback {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 4px;
+}
+
+.keyboardWrap {
+  width: 100%;
+  overflow-x: auto;
+  padding-bottom: 6px;
+}
+
+.keyboard {
+  position: relative;
+  margin: 15px auto;
+  height: 180px;
+}
+
+.two-octave {
+  width: 560px;
+}
+
+.one-octave {
+  width: 280px;
+}
+
+.three-octave {
+  width: 840px;
+}
+
+.white,
+.black {
+  position: absolute;
+  border: 1px solid #333;
+  user-select: none;
+}
+
+.white {
+  width: 40px;
+  height: 180px;
+  background: #fff;
+  z-index: 1;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  font-size: 11px;
+}
+
+.black {
+  width: 26px;
+  height: 110px;
+  background: #111;
+  color: #fff;
+  z-index: 2;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  font-size: 9px;
+}
+
+.clickable {
+  cursor: pointer;
+}
+
+.good {
+  background: #7cfc90 !important;
+  color: #000;
+}
+
+.bad {
+  background: #ff8a8a !important;
+  color: #000;
+}
+
+.drone {
+  background: #8ef58e !important;
+  color: #000;
+}
+
+.revealed {
+  background: #b9e7ff !important;
+  color: #000;
+}
+
+#modalResult {
+  font-size: 2rem;
+  font-weight: bold;
+}
+
+.status-panel,
+.trainer-panel {
+  margin: 14px auto 0;
+  max-width: 900px;
+  padding: 12px;
+  background: #ffffff;
+  border: 1px solid #d6d6d6;
+  border-radius: 8px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06);
+}
+
+#modalNotes,
+#modalParentMajorInfo,
+#modalScore,
+#modalMidiStatus,
+.trainer-result,
+.trainer-score,
+.trainer-status {
+  margin: 8px 0;
+  padding: 9px 10px;
+  border-radius: 6px;
+  text-align: left;
+  line-height: 1.35;
+}
+
+#modalNotes,
+#modalParentMajorInfo {
+  background: #f7fbff;
+  border-left: 4px solid #7fb8ff;
+}
+
+#modalNotes {
+  font-size: 1.05rem;
+  font-weight: 600;
+  letter-spacing: 0.2px;
+}
+
+#modalNotes:empty,
+#modalParentMajorInfo:empty,
+#modalChordsSection:empty {
+  display: none;
+}
+
+#modalParentMajorInfo {
+  color: #1d4f7a;
+  font-weight: 600;
+}
+
+#modalChordsSection {
+  background: #fffdf5;
+  border-left: 4px solid #e0bf61;
+  color: #4f3f1c;
+  text-align: left;
+  margin: 8px 0;
+  padding: 9px 10px;
+  border-radius: 6px;
+}
+
+#modalChordsSection table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+  margin-top: 4px;
+}
+
+#modalChordsSection .tableTitle {
+  margin: 2px 0 6px;
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: #665124;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+
+#modalChordsSection .secondaryTable {
+  margin-top: 10px;
+}
+
+#modalChordsSection th,
+#modalChordsSection td {
+  border: 1px solid #e4d9b5;
+  padding: 8px 6px;
+  text-align: center;
+  font-size: 0.95rem;
+}
+
+#modalChordsSection th {
+  background: #f4ead0;
+  font-weight: 700;
+}
+
+#modalChordsSection td {
+  background: #fffdfa;
+  font-weight: 600;
+}
+
+#modalScore,
+.trainer-score {
+  background: #f8f8f8;
+  border-left: 4px solid #9a9a9a;
+  font-weight: 600;
+}
+
+#modalMidiStatus {
+  background: #f4fff4;
+  border-left: 4px solid #62b862;
+  color: #1f5f1f;
+  font-weight: 600;
+}
+
+#modalMidiMonitor {
+  font-family: monospace;
+  background: #eee;
+  padding: 8px;
+  max-width: 700px;
+  margin: 10px auto;
+  border-radius: 6px;
+}
+
+#modalShortcutLegend {
+  margin: 16px auto 0;
+  max-width: 700px;
+  padding: 10px 12px;
+  background: #fff;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  text-align: left;
+  font-size: 14px;
+}
+
+#modalShortcutLegend strong {
+  display: block;
+  margin-bottom: 6px;
+}
+
+#modalShortcutLegend ul {
+  margin: 0;
+  padding-left: 20px;
+}
+
+.ear-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: center;
+  margin-bottom: 8px;
+}
+
+.ear-view {
+  display: none;
+}
+
+.ear-view.active {
+  display: block;
+}
+
+.trainer-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 10px;
+}
+
+.trainer-settings {
+  background: #f7fbff;
+  border-left: 4px solid #7fb8ff;
+  border-radius: 6px;
+  padding: 10px;
+  text-align: left;
+}
+
+.settings-group {
+  margin-bottom: 8px;
+}
+
+.checkbox-list {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  gap: 8px 12px;
+}
+
+.checkbox-list label,
+.choice-grid label {
+  display: inline-flex;
+  gap: 6px;
+  align-items: center;
+  font-size: 14px;
+}
+
+.choice-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: center;
+}
+
+.answer-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.answer-btn.selected {
+  border-color: #1d66c1;
+  background: #e9f3ff;
+}
+
+.trainer-status {
+  background: #f7fbff;
+  border-left: 4px solid #7fb8ff;
+  font-weight: 600;
+}
+
+.trainer-result {
+  background: #fffdf5;
+  border-left: 4px solid #e0bf61;
+}
+
+.result-correct {
+  color: #165f16;
+  font-weight: 700;
+}
+
+.result-incorrect {
+  color: #9b1b1b;
+  font-weight: 700;
+}
+
+.note-list {
+  font-family: monospace;
+}
+
+.hidden {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  body {
+    padding: 12px;
+  }
+
+  .status-panel,
+  .trainer-panel {
+    padding: 10px;
+  }
+
+  button {
+    padding: 9px 12px;
+  }
+}
