@@ -411,6 +411,7 @@ export function initIntervalTrainer(container, audio) {
     handleShortcut(action) {
       if (action === "new") newChallenge();
       if (action === "play") togglePlayback();
+      if (action === "reset") resetStats();
     },
     stopPlayback() {
       playback.stop();
@@ -685,6 +686,7 @@ function createChordTrainer(container, audio, config) {
     handleShortcut(action) {
       if (action === "new") newChallenge();
       if (action === "play") togglePlayback();
+      if (action === "reset") resetStats();
     },
     stopPlayback() {
       playback.stop();

@@ -27,7 +27,6 @@ const PARENT_MAJOR_OFFSETS = {
   Locrian: -11
 };
 const FLAT_MAJOR_PITCH_CLASSES = new Set([5, 10, 3, 8]);
-const QUIZ_SOUND_STORAGE_KEY = "modalTrainer.quizSoundEnabled";
 const PIANO_LOW = 21;
 const PIANO_HIGH = 108;
 const DEGREE_BASES = ["I", "II", "III", "IV", "V", "VI", "VII"];
@@ -52,7 +51,6 @@ export function initModalTrainer(root, audio) {
   const elements = {
     generateBtn: root.querySelector("#modalGenerateBtn"),
     playDroneBtn: root.querySelector("#modalPlayDroneBtn"),
-    quizSoundToggleBtn: root.querySelector("#modalQuizSoundToggleBtn"),
     revealBtn: root.querySelector("#modalRevealBtn"),
     resetBtn: root.querySelector("#modalResetBtn"),
     result: root.querySelector("#modalResult"),
@@ -74,7 +72,6 @@ export function initModalTrainer(root, audio) {
   let correct = 0;
   let incorrect = 0;
   let foundNotes = new Set();
-  let quizSoundEnabled = true;
   let preferFlats = false;
   let dronePlaying = false;
   let droneVoices = [];
@@ -95,10 +92,6 @@ export function initModalTrainer(root, audio) {
     labelFormatter: (note) => displayNote(note, preferFlats),
     onKeyPress: ({ note, midi }) => hit(note, midi)
   });
-
-  function setQuizSoundButtonLabel() {
-    elements.quizSoundToggleBtn.textContent = quizSoundEnabled ? "Quiz Sound: On" : "Quiz Sound: Off";
-  }
 
   function setDroneButtonLabel() {
     elements.playDroneBtn.textContent = dronePlaying ? "Pause Drone" : "Play Drone";
@@ -317,9 +310,7 @@ export function initModalTrainer(root, audio) {
       ? midiNote
       : 60 + CHROMATIC.indexOf(note);
 
-    if (quizSoundEnabled) {
-      await audio.playNote(playbackNote, 0.4, { gain: 0.08 });
-    }
+    await audio.playNote(playbackNote, 0.4, { gain: 0.08 });
 
     quizPiano.getKeysByNote(note).forEach((key) => {
       if (currentNotes.includes(note)) {
@@ -372,26 +363,6 @@ export function initModalTrainer(root, audio) {
     startDrone();
   }
 
-  function toggleQuizSound() {
-    quizSoundEnabled = !quizSoundEnabled;
-    try {
-      localStorage.setItem(QUIZ_SOUND_STORAGE_KEY, quizSoundEnabled ? "true" : "false");
-    } catch (error) {
-      console.warn("Unable to save quiz sound preference", error);
-    }
-    setQuizSoundButtonLabel();
-  }
-
-  function loadQuizSoundPreference() {
-    try {
-      const stored = localStorage.getItem(QUIZ_SOUND_STORAGE_KEY);
-      if (stored === "true") quizSoundEnabled = true;
-      if (stored === "false") quizSoundEnabled = false;
-    } catch (error) {
-      console.warn("Unable to read quiz sound preference", error);
-    }
-  }
-
   function attachMidiInput(input) {
     input.onmidimessage = (event) => {
       const [status, note, velocity] = event.data;
@@ -434,12 +405,9 @@ export function initModalTrainer(root, audio) {
 
   elements.generateBtn.addEventListener("click", generateMode);
   elements.playDroneBtn.addEventListener("click", playDroneToggle);
-  elements.quizSoundToggleBtn.addEventListener("click", toggleQuizSound);
   elements.revealBtn.addEventListener("click", revealNotes);
   elements.resetBtn.addEventListener("click", resetQuiz);
 
-  loadQuizSoundPreference();
-  setQuizSoundButtonLabel();
   setDroneButtonLabel();
   initMidi();
 

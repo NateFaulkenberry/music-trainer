@@ -99,6 +99,13 @@ document.addEventListener("keydown", (event) => {
     if (event.code === "Space") {
       event.preventDefault();
       if (event.repeat) return;
+      controllers.modal.playDroneToggle();
+      return;
+    }
+
+    if (event.code === "Enter") {
+      event.preventDefault();
+      if (event.repeat) return;
       controllers.modal.generateMode();
       return;
     }
@@ -118,9 +125,16 @@ document.addEventListener("keydown", (event) => {
     return;
   }
 
-  if (event.code === "KeyN") {
+  if (event.code === "Enter") {
+    event.preventDefault();
     if (event.repeat) return;
     controllers[activeEarView].handleShortcut("new");
+    return;
+  }
+
+  if (event.code === "KeyR") {
+    if (event.repeat) return;
+    controllers[activeEarView].handleShortcut("reset");
     return;
   }
 

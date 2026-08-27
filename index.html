@@ -21,9 +21,8 @@
     <h2>Modal Trainer</h2>
 
     <div class="modal-actions">
-      <button id="modalGenerateBtn">Generate</button>
+      <button id="modalGenerateBtn">New Challenge</button>
       <button id="modalPlayDroneBtn">Play Drone</button>
-      <button id="modalQuizSoundToggleBtn">Quiz Sound: On</button>
       <button id="modalRevealBtn">Reveal Notes</button>
       <button id="modalResetBtn">Reset Quiz</button>
     </div>
@@ -51,10 +50,11 @@
 
     <div id="modalMidiMonitor">No MIDI messages yet.</div>
 
-    <div id="modalShortcutLegend">
+    <div id="modalShortcutLegend" class="shortcut-legend">
       <strong>Keyboard Shortcuts</strong>
       <ul>
-        <li>Spacebar: Generate</li>
+        <li>Spacebar: Play/Pause Drone</li>
+        <li>Enter: New Challenge</li>
         <li>R: Reset Quiz</li>
       </ul>
     </div>
@@ -71,6 +71,15 @@
     <div id="view-intervals" class="ear-view active" aria-label="Interval Ear Training"></div>
     <div id="view-triads" class="ear-view" aria-label="Triad Ear Training"></div>
     <div id="view-sevenths" class="ear-view" aria-label="Seventh Chord Ear Training"></div>
+
+    <div id="earShortcutLegend" class="shortcut-legend">
+      <strong>Keyboard Shortcuts</strong>
+      <ul>
+        <li>Spacebar: Play/Pause Interval</li>
+        <li>Enter: New Challenge</li>
+        <li>R: Reset Quiz</li>
+      </ul>
+    </div>
   </section>
 
   <script type="module" src="js/app.js"></script>

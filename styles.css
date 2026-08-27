@@ -280,7 +280,7 @@ h3 {
   border-radius: 6px;
 }
 
-#modalShortcutLegend {
+.shortcut-legend {
   margin: 16px auto 0;
   max-width: 700px;
   padding: 10px 12px;
@@ -291,12 +291,12 @@ h3 {
   font-size: 14px;
 }
 
-#modalShortcutLegend strong {
+.shortcut-legend strong {
   display: block;
   margin-bottom: 6px;
 }
 
-#modalShortcutLegend ul {
+.shortcut-legend ul {
   margin: 0;
   padding-left: 20px;
 }
